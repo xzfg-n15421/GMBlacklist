@@ -3,10 +3,12 @@
 
 GMLIB::Files::JsonConfig* Config = nullptr;
 nlohmann::json            Language;
+int commandPermissionLevel = 3;
 
 void initConfigFile() {
     Config = new GMLIB::Files::JsonConfig("./plugins/GMBlacklist/config/config.json", defaultConfig);
     Config->initConfig();
+    commandPermissionLevel = Config->getValue<int>({"CommandPermissionLevel"}, 3);
     std::string langPath = "./plugins/GMBlacklist/language/{language}.json";
     std::string language = Config->getValue<std::string>({"language"}, "zh_CN");
     ll::utils::string_utils::replaceAll(langPath, "{language}", language);

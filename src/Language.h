@@ -4,7 +4,8 @@
 #include <GMLIB/Files/JsonLanguage.h>
 
 std::string defaultConfig = R"({
-    "language": "zh_CN"
+    "language": "zh_CN",
+    "CommandPermissionLevel": 3
 })";
 
 std::string defaultLanguage = R"({

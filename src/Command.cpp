@@ -4,7 +4,7 @@
 
 void RegBanCmd(CommandRegistry& registry) {
     auto command =
-        DynamicCommand::createCommand(registry, "ban", tr("command.ban.desc"), CommandPermissionLevel::Owner);
+        DynamicCommand::createCommand(registry, "ban", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
     command->mandatory("player", DynamicCommand::ParameterType::String);
     command->optional("minutes", DynamicCommand::ParameterType::Int);
     command->optional("reason", DynamicCommand::ParameterType::String);
@@ -56,7 +56,7 @@ void RegBanCmd(CommandRegistry& registry) {
 
 void RegUnbanCmd(CommandRegistry& registry) {
     auto command =
-        DynamicCommand::createCommand(registry, "unban", tr("command.unban.desc"), CommandPermissionLevel::Owner);
+        DynamicCommand::createCommand(registry, "unban", tr("command.unban.desc"), (CommandPermissionLevel)commandPermissionLevel);
     command->mandatory("player", DynamicCommand::ParameterType::String);
     command->addOverload({"player"});
     command->setCallback([](DynamicCommand const&                                    command,
@@ -79,7 +79,7 @@ void RegUnbanCmd(CommandRegistry& registry) {
 
 void RegBanIpCmd(CommandRegistry& registry) {
     auto command =
-        DynamicCommand::createCommand(registry, "banip", tr("command.ban.desc"), CommandPermissionLevel::Owner);
+        DynamicCommand::createCommand(registry, "banip", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
     command->setAlias("ban-ip");
     command->mandatory("ip", DynamicCommand::ParameterType::String);
     command->optional("minutes", DynamicCommand::ParameterType::Int);
@@ -126,7 +126,7 @@ void RegBanIpCmd(CommandRegistry& registry) {
 
 void RegUnbanipCmd(CommandRegistry& registry) {
     auto command =
-        DynamicCommand::createCommand(registry, "unbanip", tr("command.unban.desc"), CommandPermissionLevel::Owner);
+        DynamicCommand::createCommand(registry, "unbanip", tr("command.unban.desc"), (CommandPermissionLevel)commandPermissionLevel);
     command->mandatory("ip", DynamicCommand::ParameterType::String);
     command->addOverload({"ip"});
     command->setCallback([](DynamicCommand const&                                    command,

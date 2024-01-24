@@ -14,6 +14,7 @@
 #define PLUGIN_NAME "GMBlacklist"
 
 extern ll::Logger logger;
+extern int commandPermissionLevel;
 
 extern nlohmann::json mBanList;
 extern nlohmann::json mBanIpList;
