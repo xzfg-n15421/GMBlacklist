@@ -1,2 +1,2 @@
-# GMLIB-Plugin-Template
-Template for plugins using GMLIB
+# GMBlacklist
+Group Mountain Blacklist Plugin
