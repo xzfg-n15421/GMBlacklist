@@ -3,16 +3,23 @@
 
 GMLIB::Files::JsonConfig* Config = nullptr;
 nlohmann::json            Language;
-int commandPermissionLevel = 3;
+int                       commandPermissionLevel = 4;
 
 void initConfigFile() {
     Config = new GMLIB::Files::JsonConfig("./plugins/GMBlacklist/config/config.json", defaultConfig);
     Config->initConfig();
-    commandPermissionLevel = Config->getValue<int>({"CommandPermissionLevel"}, 3);
     std::string langPath = "./plugins/GMBlacklist/language/{language}.json";
     std::string language = Config->getValue<std::string>({"language"}, "zh_CN");
     ll::utils::string_utils::replaceAll(langPath, "{language}", language);
-    Language = GMLIB::Files::JsonLanguage::initLanguage(langPath, defaultLanguage);
+    Language               = GMLIB::Files::JsonLanguage::initLanguage(langPath, defaultLanguage);
+    commandPermissionLevel = Config->getValue<int>({"CommandPermissionLevel"}, 4);
+    if (commandPermissionLevel < 0 || commandPermissionLevel > 4) {
+        Config->setValue<int>({"CommandPermissionLevel"}, 4);
+        logger.error(tr("permission.error.invalidLevel"));
+    }
+    if (commandPermissionLevel == 0) {
+        logger.warn(tr("permission.warning.dangerousLevel"));
+    }
     initDataFile();
 }
 

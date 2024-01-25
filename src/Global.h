@@ -1,6 +1,10 @@
 #pragma once
+#include <GMLIB/Files/JsonConfig.h>
 #include <GMLIB/Files/JsonFile.h>
+#include <GMLIB/Files/JsonLanguage.h>
 #include <ll/api/Logger.h>
+#include <ll/api/command/CommandRegistrar.h>
+#include <ll/api/command/DynamicCommand.h>
 #include <ll/api/memory/Hook.h>
 #include <ll/api/service/Bedrock.h>
 #include <mc/certificates/Certificate.h>
@@ -14,7 +18,9 @@
 #define PLUGIN_NAME "GMBlacklist"
 
 extern ll::Logger logger;
-extern int commandPermissionLevel;
+extern int        commandPermissionLevel;
+
+extern GMLIB::Files::JsonConfig* Config;
 
 extern nlohmann::json mBanList;
 extern nlohmann::json mBanIpList;
@@ -33,4 +39,9 @@ extern bool banPlayer(std::string& name, std::string& opSource, int time, std::s
 extern bool banIP(std::string& ip, std::string& opSource, int time, std::string& reason);
 extern bool banOnlinePlayer(Player* pl, std::string& opSource, int time, std::string& reason);
 extern bool unbanPlayer(std::string& name);
-extern bool unbanIP(std::string& ip) ;
+extern bool unbanIP(std::string& ip);
+
+extern void showBanPlayersList(CommandOutput& output);
+extern void showBanIpsList(CommandOutput& output);
+
+extern void unloadPlugin();

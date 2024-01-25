@@ -1,10 +1,12 @@
 #include "Global.h"
-#include <ll/api/command/CommandRegistrar.h>
-#include <ll/api/command/DynamicCommand.h>
 
 void RegBanCmd(CommandRegistry& registry) {
-    auto command =
-        DynamicCommand::createCommand(registry, "ban", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
+    auto command = DynamicCommand::createCommand(
+        registry,
+        "ban",
+        tr("command.ban.desc"),
+        (CommandPermissionLevel)commandPermissionLevel
+    );
     command->mandatory("player", DynamicCommand::ParameterType::String);
     command->optional("minutes", DynamicCommand::ParameterType::Int);
     command->optional("reason", DynamicCommand::ParameterType::String);
@@ -55,8 +57,12 @@ void RegBanCmd(CommandRegistry& registry) {
 }
 
 void RegUnbanCmd(CommandRegistry& registry) {
-    auto command =
-        DynamicCommand::createCommand(registry, "unban", tr("command.unban.desc"), (CommandPermissionLevel)commandPermissionLevel);
+    auto command = DynamicCommand::createCommand(
+        registry,
+        "unban",
+        tr("command.unban.desc"),
+        (CommandPermissionLevel)commandPermissionLevel
+    );
     command->mandatory("player", DynamicCommand::ParameterType::String);
     command->addOverload({"player"});
     command->setCallback([](DynamicCommand const&                                    command,
@@ -78,8 +84,12 @@ void RegUnbanCmd(CommandRegistry& registry) {
 }
 
 void RegBanIpCmd(CommandRegistry& registry) {
-    auto command =
-        DynamicCommand::createCommand(registry, "banip", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
+    auto command = DynamicCommand::createCommand(
+        registry,
+        "banip",
+        tr("command.ban.desc"),
+        (CommandPermissionLevel)commandPermissionLevel
+    );
     command->setAlias("ban-ip");
     command->mandatory("ip", DynamicCommand::ParameterType::String);
     command->optional("minutes", DynamicCommand::ParameterType::Int);
@@ -125,8 +135,12 @@ void RegBanIpCmd(CommandRegistry& registry) {
 }
 
 void RegUnbanipCmd(CommandRegistry& registry) {
-    auto command =
-        DynamicCommand::createCommand(registry, "unbanip", tr("command.unban.desc"), (CommandPermissionLevel)commandPermissionLevel);
+    auto command = DynamicCommand::createCommand(
+        registry,
+        "unbanip",
+        tr("command.unban.desc"),
+        (CommandPermissionLevel)commandPermissionLevel
+    );
     command->mandatory("ip", DynamicCommand::ParameterType::String);
     command->addOverload({"ip"});
     command->setCallback([](DynamicCommand const&                                    command,
@@ -147,10 +161,44 @@ void RegUnbanipCmd(CommandRegistry& registry) {
     DynamicCommand::setup(registry, std::move(command));
 }
 
+void RegBanlistCmd(CommandRegistry& registry) {
+    auto command = DynamicCommand::createCommand(
+        registry,
+        "banlist",
+        tr("command.banlist.desc"),
+        (CommandPermissionLevel)commandPermissionLevel
+    );
+    command->setEnum("Mode", {"players", "ips"});
+    command->optional(
+        "mode",
+        DynamicCommand::ParameterType::Enum,
+        "Mode",
+        CommandParameterOption::EnumAutocompleteExpansion
+    );
+    command->addOverload({"mode"});
+    command->setCallback([](DynamicCommand const&                                    command,
+                            CommandOrigin const&                                     origin,
+                            CommandOutput&                                           output,
+                            std::unordered_map<std::string, DynamicCommand::Result>& result) {
+        auto type = origin.getOriginType();
+        if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
+            if (result["mode"].isSet) {
+                if (result["mode"].get<std::string>() == "ips") {
+                    return showBanIpsList(output);
+                }
+            }
+            return showBanPlayersList(output);
+        }
+        return output.error(tr("command.error.invalidCommandOrigin"));
+    });
+    DynamicCommand::setup(registry, std::move(command));
+}
+
 void RegisterCommands() {
     auto registry = ll::service::getCommandRegistry();
     RegBanCmd(registry);
     RegUnbanCmd(registry);
     RegBanIpCmd(registry);
     RegUnbanipCmd(registry);
+    RegBanlistCmd(registry);
 }

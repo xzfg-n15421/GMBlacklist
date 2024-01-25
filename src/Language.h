@@ -1,7 +1,5 @@
 #pragma once
 #include "Global.h"
-#include <GMLIB/Files/JsonConfig.h>
-#include <GMLIB/Files/JsonLanguage.h>
 
 std::string defaultConfig = R"({
     "language": "zh_CN",
@@ -27,5 +25,12 @@ std::string defaultLanguage = R"({
     "command.unbanip.success": "已成功IP地址 %1$s 的封禁",
     "command.unbanip.notBanned": "无法解除封禁，IP地址 %1$s 未被服务器封禁！",
     "command.error.invalidTime": "封禁时长必须大于等于1分钟！",
-    "command.error.invalidCommandOrigin": "该命令只能由玩家或控制台执行！"
+    "command.error.invalidCommandOrigin": "该命令只能由玩家或控制台执行！",
+    "permission.error.invalidLevel": "无效的命令权限等级！已重置为默认值！",
+    "permission.warning.dangerousLevel": "[警告] 将命令权限等级设置为 0 是十分危险的！这意味着所有人都可以使用本插件命令！",
+    "command.banlist.desc": "查询封禁列表",
+    "command.banlist.players.showInfo": "玩家 %1$s 已被 %2$s 封禁，封禁原因：%3$s ，截止日期：%4$s",
+    "command.banlist.ips.showInfo": "IP地址 %1$s 已被 %2$s 封禁，封禁原因：%3$s ，截止日期：%4$s",
+    "command.banlist.noBans": "没有查询到封禁信息",
+    "command.source.console": "控制台"
 })";

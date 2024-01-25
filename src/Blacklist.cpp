@@ -263,6 +263,36 @@ void checkBanTimeTask() {
     }).detach();
 }
 
+void showBanPlayersList(CommandOutput& output) {
+    if (mBanList.empty()) {
+        return output.success(tr("command.banlist.noBans"));
+    }
+    for (auto& key : mBanList) {
+        auto name        = key["name"].get<std::string>();
+        auto source_key  = key["source"].get<std::string>();
+        auto reason      = key["reason"].get<std::string>();
+        auto endTime_key = key["expires"].get<std::string>();
+        auto source      = source_key == "Console" ? tr("command.source.console") : source_key;
+        auto endTime     = endTime_key == "forever" ? tr("disconnect.forever") : endTime_key;
+        output.success(tr("command.banlist.players.showInfo", {name, source, reason, endTime}));
+    }
+}
+
+void showBanIpsList(CommandOutput& output) {
+    if (mBanIpList.empty()) {
+        return output.success(tr("command.banlist.noBans"));
+    }
+    for (auto& key : mBanIpList) {
+        auto ip          = key["ip"].get<std::string>();
+        auto source_key  = key["source"].get<std::string>();
+        auto reason      = key["reason"].get<std::string>();
+        auto endTime_key = key["expires"].get<std::string>();
+        auto source      = source_key == "Console" ? tr("command.source.console") : source_key;
+        auto endTime     = endTime_key == "forever" ? tr("disconnect.forever") : endTime_key;
+        output.success(tr("command.banlist.ips.showInfo", {ip, source, reason, endTime}));
+    }
+}
+
 LL_AUTO_TYPE_INSTANCE_HOOK(
     PlayerLoginHook,
     ll::memory::HookPriority::High,
@@ -287,4 +317,16 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     auto strUuid = uuid.asString();
     handleBanPlayer(source, strUuid, realName);
     handleBanIP(source, ipAddress);
+}
+
+void unloadPlugin() {
+    auto event = ll::memory::HookRegistrar<PlayerLoginHook>();
+    event.unhook();
+    auto registry = ll::service::getCommandRegistry();
+    registry->unregisterCommand("ban");
+    registry->unregisterCommand("unban");
+    registry->unregisterCommand("banip");
+    registry->unregisterCommand("unbanip");
+    registry->unregisterCommand("banlist");
+    delete Config;
 }
