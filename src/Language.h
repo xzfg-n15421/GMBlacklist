@@ -3,7 +3,7 @@
 
 std::string defaultConfig = R"({
     "language": "zh_CN",
-    "CommandPermissionLevel": 3
+    "CommandPermissionLevel": 4
 })";
 
 std::string defaultLanguage = R"({
