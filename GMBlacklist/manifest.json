@@ -1,0 +1,10 @@
+{
+    "name": "GMBlacklist",
+    "entry": "GMBlacklist.dll",
+    "type": "native",
+    "dependencies": [
+        {
+            "name": "GMLIB"
+        }
+    ]
+}
