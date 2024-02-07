@@ -1,18 +1,5 @@
 #pragma once
-#include <GMLIB/Files/JsonConfig.h>
-#include <GMLIB/Files/JsonFile.h>
-#include <GMLIB/Files/JsonLanguage.h>
-#include <ll/api/Logger.h>
-#include <ll/api/command/CommandRegistrar.h>
-#include <ll/api/command/DynamicCommand.h>
-#include <ll/api/memory/Hook.h>
-#include <ll/api/service/Bedrock.h>
-#include <mc/certificates/Certificate.h>
-#include <mc/certificates/ExtendedCertificate.h>
-#include <mc/network/ServerNetworkHandler.h>
-#include <mc/network/packet/LoginPacket.h>
-#include <mc/world/actor/player/Player.h>
-#include <mc/world/level/Level.h>
+#include <include_all.h>
 #include <sstream>
 
 #define PLUGIN_NAME "GMBlacklist"
@@ -44,4 +31,4 @@ extern bool unbanIP(std::string& ip);
 extern void showBanPlayersList(CommandOutput& output);
 extern void showBanIpsList(CommandOutput& output);
 
-extern void unloadPlugin();
+extern void listenEvent();

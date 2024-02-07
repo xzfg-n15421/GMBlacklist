@@ -203,36 +203,6 @@ bool unbanIP(std::string& ip) {
     return false;
 }
 
-void handleBanPlayer(NetworkIdentifier const& source, std::string& uuid, std::string& realName) {
-    if (isBanned(uuid) || isBanned(realName)) {
-        auto info    = getBannedInfo(uuid);
-        auto endtime = info.second == "forever" ? tr("disconnect.forever") : info.second;
-        if (isExpired(info.second)) {
-            unbanPlayer(realName);
-            return;
-        }
-        auto msg = tr("disconnect.isBanned", {info.first, endtime});
-        ll::service::getServerNetworkHandler()
-            ->disconnectClient(source, Connection::DisconnectFailReason::Kicked, msg, false);
-        return;
-    }
-}
-
-void handleBanIP(NetworkIdentifier const& source, std::string& ip) {
-    if (isIpBanned(ip)) {
-        auto info    = getBannedIpInfo(ip);
-        auto endtime = info.second == "forever" ? tr("disconnect.forever") : info.second;
-        if (isExpired(info.second)) {
-            unbanIP(ip);
-            return;
-        }
-        auto msg = tr("disconnect.ipIsBanned", {info.first, endtime});
-        ll::service::getServerNetworkHandler()
-            ->disconnectClient(source, Connection::DisconnectFailReason::Kicked, msg, false);
-        return;
-    }
-}
-
 void checkBanTime() {
     mtx.lock();
     for (auto it = mBanList.begin(); it != mBanList.end(); ++it) {
@@ -293,40 +263,39 @@ void showBanIpsList(CommandOutput& output) {
     }
 }
 
-LL_AUTO_TYPE_INSTANCE_HOOK(
-    PlayerLoginHook,
-    ll::memory::HookPriority::High,
-    ServerNetworkHandler,
-    "?handle@ServerNetworkHandler@@UEAAXAEBVNetworkIdentifier@@AEBVLoginPacket@@@Z",
-    void,
-    class NetworkIdentifier const& source,
-    class LoginPacket const&       packet
-) {
-    origin(source, packet);
-    auto cert       = packet.mConnectionRequest->getCertificate();
-    auto uuid       = ExtendedCertificate::getIdentity(*cert);
-    auto clientXuid = ExtendedCertificate::getXuid(*cert, true);
-    auto serverXuid = ExtendedCertificate::getXuid(*cert, false);
-    auto realName   = ExtendedCertificate::getIdentityName(*cert);
-    auto ipAddress  = getIP(source.getIPAndPort());
-    if (clientXuid.empty()) {
-        std::string msg = tr("disconnect.clientNotAuth");
-        ll::service::getServerNetworkHandler()
-            ->disconnectClient(source, Connection::DisconnectFailReason::Kicked, msg, false);
-    }
-    auto strUuid = uuid.asString();
-    handleBanPlayer(source, strUuid, realName);
-    handleBanIP(source, ipAddress);
-}
-
-void unloadPlugin() {
-    auto event = ll::memory::HookRegistrar<PlayerLoginHook>();
-    event.unhook();
-    auto registry = ll::service::getCommandRegistry();
-    registry->unregisterCommand("ban");
-    registry->unregisterCommand("unban");
-    registry->unregisterCommand("banip");
-    registry->unregisterCommand("unbanip");
-    registry->unregisterCommand("banlist");
-    delete Config;
+void listenEvent() {
+    auto& eventBus = ll::event::EventBus::getInstance();
+    eventBus.emplaceListener<GMLIB::Event::PlayerEvent::PlayerLoginAfterEvent>(
+        [](GMLIB::Event::PlayerEvent::PlayerLoginAfterEvent& event) {
+            auto clientXuid = event.getClientAuthXuid();
+            if (clientXuid.empty()) {
+                std::string msg = tr("disconnect.clientNotAuth");
+                event.disConnectClient(msg);
+            }
+            auto uuid     = event.getUuid().asString();
+            auto xuid     = event.getServerAuthXuid();
+            auto realName = event.getRealName();
+            if (isBanned(uuid) || isBanned(realName)) {
+                auto info    = getBannedInfo(uuid);
+                auto endtime = info.second == "forever" ? tr("disconnect.forever") : info.second;
+                if (isExpired(info.second)) {
+                    unbanPlayer(realName);
+                } else {
+                    auto msg = tr("disconnect.isBanned", {info.first, endtime});
+                    event.disConnectClient(msg);
+                }
+            }
+            auto ipAddress = event.getIp();
+            if (isIpBanned(ipAddress)) {
+                auto info    = getBannedIpInfo(ipAddress);
+                auto endtime = info.second == "forever" ? tr("disconnect.forever") : info.second;
+                if (isExpired(info.second)) {
+                    unbanIP(ipAddress);
+                } else {
+                    auto msg = tr("disconnect.ipIsBanned", {info.first, endtime});
+                    event.disConnectClient(msg);
+                }
+            }
+        }
+    );
 }

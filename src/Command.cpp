@@ -1,4 +1,6 @@
+/*
 #include "Global.h"
+#include <ll/
 
 void RegBanCmd(CommandRegistry& registry) {
     auto command = DynamicCommand::createCommand(
@@ -202,3 +204,4 @@ void RegisterCommands() {
     RegUnbanipCmd(registry);
     RegBanlistCmd(registry);
 }
+*/
