@@ -1,5 +1,4 @@
 #include "Global.h"
-#include <GMLIB/Server/UserCache.h>
 
 nlohmann::json mBanList;
 nlohmann::json mBanIpList;

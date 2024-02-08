@@ -32,3 +32,5 @@ extern void showBanPlayersList(CommandOutput& output);
 extern void showBanIpsList(CommandOutput& output);
 
 extern void listenEvent();
+
+extern void RegisterCommands();
