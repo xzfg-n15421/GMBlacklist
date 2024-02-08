@@ -245,11 +245,9 @@ void RegBanlistCmd() {
         .execute<[](CommandOrigin const& origin, CommandOutput& output, BanListParam const& param) {
             auto type = origin.getOriginType();
             if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
-                // if (param.mode) {
                 if (param.mode == "ips") {
                     return showBanIpsList(output);
                 }
-                //}
                 return showBanPlayersList(output);
             }
             return output.error(tr("command.error.invalidCommandOrigin"));
