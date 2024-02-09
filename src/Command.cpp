@@ -1,95 +1,65 @@
 #include "Global.h"
 
-struct BanParam1 {
+struct BanParam {
     std::string                        name;
     ll::command::Optional<int>         time;
     ll::command::Optional<std::string> reason;
 };
 
-struct BanParam2 {
-    std::string                        name;
-    ll::command::Optional<std::string> reason;
-};
+void banExecute(CommandOrigin const& origin, CommandOutput& output, BanParam const& param) {
+    std::string source = "Console";
+    int         time   = -1;
+    std::string reason = tr("disconnect.defaultReason");
+    auto        type   = origin.getOriginType();
+    if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
+        if (type == CommandOriginType::Player) {
+            auto pl = (Player*)origin.getEntity();
+            source  = pl->getRealName();
+        }
+        if (param.time.has_value()) {
+            time = param.time;
+            if (time < 1) {
+                return output.error(tr("command.error.invalidTime"));
+            }
+        }
+        if (param.reason.has_value()) {
+            reason = param.reason;
+            if (reason.empty()) {
+                reason = tr("disconnect.defaultReason");
+            }
+        }
+        auto name = param.name;
+        auto pl   = ll::service::getLevel()->getPlayer(name);
+        bool res  = false;
+        if (pl) {
+            res = banOnlinePlayer(pl, source, time, reason);
+        } else {
+            res = banPlayer(name, source, time, reason);
+        }
+        if (res) {
+            std::string endTime = time < 0 ? tr("disconnect.forever") : getExpiredTime(time);
+            return output.success(tr("command.ban.success", {name, endTime}));
+        }
+        return output.error(tr("command.ban.isBanned", {name}));
+    }
+    return output.error(tr("command.error.invalidCommandOrigin"));
+}
 
 void RegBanCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance()
                     .getOrCreateCommand("ban", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
-    cmd.overload<BanParam1>()
+    cmd.overload<BanParam>()
         .required("name")
         .optional("time")
         .optional("reason")
-        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanParam1 const& param) {
-            std::string source = "Console";
-            int         time   = -1;
-            std::string reason = tr("disconnect.defaultReason");
-            auto        type   = origin.getOriginType();
-            if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
-                if (type == CommandOriginType::Player) {
-                    auto pl = (Player*)origin.getEntity();
-                    source  = pl->getRealName();
-                }
-                if (param.time.has_value()) {
-                    time = param.time;
-                    if (time < 1) {
-                        return output.error(tr("command.error.invalidTime"));
-                    }
-                }
-                if (param.reason.has_value()) {
-                    reason = param.reason;
-                    if (reason.empty()) {
-                        reason = tr("disconnect.defaultReason");
-                    }
-                }
-                auto name = param.name;
-                auto pl   = ll::service::getLevel()->getPlayer(name);
-                bool res  = false;
-                if (pl) {
-                    res = banOnlinePlayer(pl, source, time, reason);
-                } else {
-                    res = banPlayer(name, source, time, reason);
-                }
-                if (res) {
-                    std::string endTime = time < 0 ? tr("disconnect.forever") : getExpiredTime(time);
-                    return output.success(tr("command.ban.success", {name, endTime}));
-                }
-                return output.error(tr("command.ban.isBanned", {name}));
-            }
-            return output.error(tr("command.error.invalidCommandOrigin"));
+        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanParam const& param) {
+            return banExecute(origin, output, param);
         }>();
-    cmd.overload<BanParam2>()
+    cmd.overload<BanParam>()
         .required("name")
         .optional("reason")
-        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanParam2 const& param) {
-            std::string source = "Console";
-            int         time   = -1;
-            std::string reason = tr("disconnect.defaultReason");
-            auto        type   = origin.getOriginType();
-            if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
-                if (type == CommandOriginType::Player) {
-                    auto pl = (Player*)origin.getEntity();
-                    source  = pl->getRealName();
-                }
-                if (param.reason.has_value()) {
-                    reason = param.reason;
-                    if (reason.empty()) {
-                        reason = tr("disconnect.defaultReason");
-                    }
-                }
-                auto name = param.name;
-                auto pl   = ll::service::getLevel()->getPlayer(name);
-                bool res  = false;
-                if (pl) {
-                    res = banOnlinePlayer(pl, source, time, reason);
-                } else {
-                    res = banPlayer(name, source, time, reason);
-                }
-                if (res) {
-                    std::string endTime = tr("disconnect.forever");
-                    return output.success(tr("command.ban.success", {name, endTime}));
-                }
-                return output.error(tr("command.ban.isBanned", {name}));
-            }
-            return output.error(tr("command.error.invalidCommandOrigin"));
+        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanParam const& param) {
+            return banExecute(origin, output, param);
         }>();
 }
 
@@ -119,16 +89,44 @@ void RegUnbanCmd() {
         }>();
 }
 
-struct BanIpParam1 {
+struct BanIpParam {
     std::string                        ip;
     ll::command::Optional<int>         time;
     ll::command::Optional<std::string> reason;
 };
 
-struct BanIpParam2 {
-    std::string                        ip;
-    ll::command::Optional<std::string> reason;
-};
+void banIpExecute(CommandOrigin const& origin, CommandOutput& output, BanIpParam const& param) {
+    std::string source = "Console";
+    int         time   = -1;
+    std::string reason = tr("disconnect.defaultReason");
+    auto        type   = origin.getOriginType();
+    if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
+        if (type == CommandOriginType::Player) {
+            auto pl = (Player*)origin.getEntity();
+            source  = pl->getRealName();
+        }
+        if (param.time.has_value()) {
+            time = param.time;
+            if (time < 1) {
+                return output.error(tr("command.error.invalidTime"));
+            }
+        }
+        if (param.reason.has_value()) {
+            reason = param.reason;
+            if (reason.empty()) {
+                reason = tr("disconnect.defaultReason");
+            }
+        }
+        auto ip  = param.ip;
+        auto res = banIP(ip, source, time, reason);
+        if (res) {
+            std::string endTime = time < 0 ? tr("disconnect.forever") : getExpiredTime(time);
+            return output.success(tr("command.banip.success", {ip, endTime}));
+        }
+        return output.error(tr("command.banip.isBanned", {ip}));
+    }
+    return output.error(tr("command.error.invalidCommandOrigin"));
+}
 
 void RegBanIpCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
@@ -136,70 +134,19 @@ void RegBanIpCmd() {
         tr("command.banip.desc"),
         (CommandPermissionLevel)commandPermissionLevel
     );
-    cmd.overload<BanIpParam1>()
+    ll::service::getCommandRegistry()->registerAlias("banip", "ban-ip");
+    cmd.overload<BanIpParam>()
         .required("ip")
         .optional("time")
         .optional("reason")
-        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanIpParam1 const& param) {
-            std::string source = "Console";
-            int         time   = -1;
-            std::string reason = tr("disconnect.defaultReason");
-            auto        type   = origin.getOriginType();
-            if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
-                if (type == CommandOriginType::Player) {
-                    auto pl = (Player*)origin.getEntity();
-                    source  = pl->getRealName();
-                }
-                if (param.time.has_value()) {
-                    time = param.time;
-                    if (time < 1) {
-                        return output.error(tr("command.error.invalidTime"));
-                    }
-                }
-                if (param.reason.has_value()) {
-                    reason = param.reason;
-                    if (reason.empty()) {
-                        reason = tr("disconnect.defaultReason");
-                    }
-                }
-                auto ip  = param.ip;
-                auto res = banIP(ip, source, time, reason);
-                if (res) {
-                    std::string endTime = time < 0 ? tr("disconnect.forever") : getExpiredTime(time);
-                    return output.success(tr("command.banip.success", {ip, endTime}));
-                }
-                return output.error(tr("command.banip.isBanned", {ip}));
-            }
-            return output.error(tr("command.error.invalidCommandOrigin"));
+        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanIpParam const& param) {
+            return banIpExecute(origin, output, param);
         }>();
-    cmd.overload<BanIpParam2>()
+    cmd.overload<BanIpParam>()
         .required("ip")
         .optional("reason")
-        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanIpParam2 const& param) {
-            std::string source = "Console";
-            int         time   = -1;
-            std::string reason = tr("disconnect.defaultReason");
-            auto        type   = origin.getOriginType();
-            if (type == CommandOriginType::DedicatedServer || type == CommandOriginType::Player) {
-                if (type == CommandOriginType::Player) {
-                    auto pl = (Player*)origin.getEntity();
-                    source  = pl->getRealName();
-                }
-                if (param.reason.has_value()) {
-                    reason = param.reason;
-                    if (reason.empty()) {
-                        reason = tr("disconnect.defaultReason");
-                    }
-                }
-                auto ip  = param.ip;
-                auto res = banIP(ip, source, time, reason);
-                if (res) {
-                    std::string endTime = tr("disconnect.forever");
-                    return output.success(tr("command.banip.success", {ip, endTime}));
-                }
-                return output.error(tr("command.banip.isBanned", {ip}));
-            }
-            return output.error(tr("command.error.invalidCommandOrigin"));
+        .execute<[](CommandOrigin const& origin, CommandOutput& output, BanIpParam const& param) {
+            return banIpExecute(origin, output, param);
         }>();
 }
 
