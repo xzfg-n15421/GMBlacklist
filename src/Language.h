@@ -1,12 +1,37 @@
 #pragma once
 #include "Global.h"
 
-std::string defaultConfig = R"({
-    "language": "zh_CN",
-    "CommandPermissionLevel": 4
+std::string defaultLanguage_en_US = R"({
+    "disconnect.isBanned": "You are banned!\n\nReason: %1$s \nEnd Time: %2$s",
+    "disconnect.ipIsBanned": "Your IP is banned:\n\nReason: %1$s \nEnd Time: %2$s",
+    "disconnect.defaultReason": "You are banned by Admin",
+    "disconnect.forever": "Forever",
+    "disconnect.clientNotAuth": "The client is not logged in! \n\nTo access the server, log in to your Xbox account!",
+    "command.ban.desc": "Ban a player",
+    "command.ban.success": "Player %1$s is successfully banned, unban date: %2$s",
+    "command.ban.isBanned": "Player %1$s is already banned",
+    "command.unban.desc": "unban a player",
+    "command.unban.success": "Player %1$s is successfully unbanned!",
+    "command.unban.notBanned": "Player %1$s is not banned!",
+    "command.banip.desc": "unban an IP",
+    "command.banip.success": "IP %1$s is successfully banned, unban date: %2$s",
+    "command.banip.isBanned": "IP %1$s is already banned",
+    "command.unbanip.desc": "unban an IP",
+    "command.unbanip.success": "IP %1$s is successfully unbanned!",
+    "command.unbanip.notBanned": "IP %1$s is not banned!",
+    "command.error.invalidTime": "The ban duration must be 1 minute or greater!",
+    "command.error.invalidCommandOrigin": "This command can only be executed by the player or the console!",
+    "permission.error.invalidLevel": "Invalid command permission level! Reset to default!",
+    "permission.warning.dangerousLevel": "[WARNING] Setting the command permission level to 0 is dangerous! This means that everyone can use this plugin command!",
+    "command.banlist.desc": "Query ban list",
+    "command.banlist.players.showInfo": "Player %1$s is banned by %2$s, reason: %3$s , End Time: %4$s",
+    "command.banlist.ips.showInfo": "IP %1$s is banned by %2$s, reason: %3$s ,End Time: %4$s",
+    "command.banlist.noBans": "No banned information was queried",
+    "command.source.console": "Console"
 })";
 
-std::string defaultLanguage = R"({
+
+std::string defaultLanguage_zh_CN = R"({
     "disconnect.isBanned": "你已被服务器封禁！\n\n原因： %1$s \n解封时间： %2$s",
     "disconnect.ipIsBanned": "你的IP地址已被服务器封禁！\n\n原因： %1$s \n解封时间： %2$s",
     "disconnect.defaultReason": "你已被管理员封禁",
