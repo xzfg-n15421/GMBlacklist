@@ -10,7 +10,7 @@ void initConfigFile() {
     Config = new GMLIB::Files::JsonConfig("./plugins/GMBlacklist/config/config.json", defaultConfig);
     Config->init();
     std::string langPath     = "./plugins/GMBlacklist/language/";
-    std::string languageCode = Config->getValue<std::string>({"language"}, "zh_CN");
+    std::string languageCode = Config->getValue<std::string>({"language"}, "en_US");
     Language                 = new GMLIB::Files::I18n::JsonI18n(langPath);
     Language->loadLanguage("en_US", defaultLanguage_en_US);
     Language->loadLanguage("zh_CN", defaultLanguage_zh_CN);
