@@ -1,17 +1,20 @@
 {
     "format_version": 2,
     "tooth": "github.com/GroupMountain/GMBlacklist",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "info": {
         "name": "GMBlacklist",
-        "description": "Group Mountain Blacklist Plugin",
-        "author": "Tsubasa6848",
-        "source": "github.com/GroupMountain/GMBlacklist",
+        "description": "Blacklist Plugin on Bedrock Dedicated Server",
+        "author": "GroupMountain Team",
         "tags": [
             "LeviLamina",
             "GMLIB",
             "GMBlacklist"
         ]
+    },
+    "asset_url": "https://github.com/GroupMountain/GMBlacklist/releases/download/v0.8.0/GMBlacklist-windows-x64.zip",
+    "dependencies": {
+        "github.com/GroupMountain/GMLIB": ">=0.8.0"
     },
     "files": {
         "place": [

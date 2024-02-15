@@ -12,8 +12,9 @@ void initConfigFile() {
     std::string langPath     = "./plugins/GMBlacklist/language/";
     std::string languageCode = Config->getValue<std::string>({"language"}, "en_US");
     Language                 = new GMLIB::Files::I18n::JsonI18n(langPath);
-    Language->loadLanguage("en_US", defaultLanguage_en_US);
-    Language->loadLanguage("zh_CN", defaultLanguage_zh_CN);
+    Language->updateOrCreateLanguage("en_US", defaultLanguage_en_US);
+    Language->updateOrCreateLanguage("zh_CN", defaultLanguage_zh_CN);
+    Language->loadAllLanguages();
     Language->chooseLanguage(languageCode);
     commandPermissionLevel = Config->getValue<int>({"CommandPermissionLevel"}, 4);
     if (commandPermissionLevel < 0 || commandPermissionLevel > 4) {
