@@ -27,7 +27,8 @@ std::string defaultLanguage_en_US = R"({
     "command.banlist.players.showInfo": "Player %1$s is banned by %2$s, reason: %3$s , End Time: %4$s",
     "command.banlist.ips.showInfo": "IP %1$s is banned by %2$s, reason: %3$s ,End Time: %4$s",
     "command.banlist.noBans": "No banned information was queried",
-    "command.source.console": "Console"
+    "command.source.console": "Console",
+    "error.fileIsBroken": "File %1$s is broken, trying to generate a new one."
 })";
 
 
@@ -57,5 +58,6 @@ std::string defaultLanguage_zh_CN = R"({
     "command.banlist.players.showInfo": "玩家 %1$s 已被 %2$s 封禁，封禁原因：%3$s ，截止日期：%4$s",
     "command.banlist.ips.showInfo": "IP地址 %1$s 已被 %2$s 封禁，封禁原因：%3$s ，截止日期：%4$s",
     "command.banlist.noBans": "没有查询到封禁信息",
-    "command.source.console": "控制台"
+    "command.source.console": "控制台",
+    "error.fileIsBroken": "文件 %1$s 已损坏！正在重新生成文件！"
 })";

@@ -17,8 +17,20 @@ void saveBanIpFile() {
 
 void initDataFile() {
     auto emptyFile = nlohmann::json::array();
-    mBanList       = GMLIB::Files::JsonFile::initJson("./banned-players.json", emptyFile);
-    mBanIpList     = GMLIB::Files::JsonFile::initJson("./banned-ips.json", emptyFile);
+    try {
+        mBanList = GMLIB::Files::JsonFile::initJson("./banned-players.json", emptyFile);
+    } catch (...) {
+        mBanList = emptyFile;
+        logger.error(tr("error.fileIsBroken", {"'banned-players.json'"}));
+        saveBanFile();
+    }
+    try {
+        mBanIpList = GMLIB::Files::JsonFile::initJson("./banned-ips.json", emptyFile);
+    } catch (...) {
+        mBanIpList = emptyFile;
+        logger.error(tr("error.fileIsBroken", {"'banned-ips.json'"}));
+        saveBanIpFile();
+    }
 }
 
 std::string getIP(std::string ipAndPort) {
@@ -55,19 +67,38 @@ std::string getExpiredTime(int minutes) {
     return ss.str();
 }
 
-bool isBanned(std::string& info) {
+bool isBanned(std::string& uuid, std::string& realname) {
     for (auto& key : mBanList) {
         if (key.contains("uuid")) {
-            if (key["uuid"] == info) {
+            if (key["uuid"] == uuid) {
                 return true;
             }
         } else {
-            if (key["name"] == info) {
-                auto data = GMLIB::Server::UserCache::tryFindCahceInfoFromName(info);
-                if (data.has_value()) {
-                    key["uuid"] = data.value()["uuid"];
-                    saveBanFile();
-                }
+            if (key["name"] == realname) {
+                key["uuid"] = uuid;
+                saveBanFile();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool isNameBanned(std::string& realname) {
+    for (auto& key : mBanList) {
+        if (key.contains("name")) {
+            if (key["name"] == realname) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool isUuidBanned(std::string& uuid) {
+    for (auto& key : mBanList) {
+        if (key.contains("uuid")) {
+            if (key["uuid"] == uuid) {
                 return true;
             }
         }
@@ -109,18 +140,10 @@ std::pair<std::string, std::string> getBannedIpInfo(std::string& ip) {
 }
 
 bool banPlayer(std::string& name, std::string& opSource, int time, std::string& reason) {
-    if (isBanned(name)) {
+    if (isNameBanned(name)) {
         return false;
     }
-    auto info = GMLIB::Server::UserCache::tryFindCahceInfoFromName(name);
-    auto key  = nlohmann::json::object();
-    if (info.has_value()) {
-        auto cacheUuid = info.value()["uuid"].get<std::string>();
-        if (isBanned(cacheUuid)) {
-            return false;
-        }
-        key["uuid"] = cacheUuid;
-    }
+    auto key       = nlohmann::json::object();
     auto endTime   = time < 0 ? "forever" : getExpiredTime(time);
     key["name"]    = name;
     key["reason"]  = reason;
@@ -159,7 +182,7 @@ bool banIP(std::string& ip, std::string& opSource, int time, std::string& reason
 
 bool banOnlinePlayer(Player* pl, std::string& opSource, int time, std::string& reason) {
     auto uuid = pl->getUuid().asString();
-    if (!isBanned(uuid)) {
+    if (!isUuidBanned(uuid)) {
         auto info       = nlohmann::json::object();
         auto endTime    = time < 0 ? "forever" : getExpiredTime(time);
         info["uuid"]    = uuid;
@@ -264,8 +287,8 @@ void showBanIpsList(CommandOutput& output) {
 
 void listenEvent() {
     auto& eventBus = ll::event::EventBus::getInstance();
-    eventBus.emplaceListener<GMLIB::Event::PlayerEvent::PlayerLoginAfterEvent>(
-        [](GMLIB::Event::PlayerEvent::PlayerLoginAfterEvent& event) {
+    eventBus.emplaceListener<GMLIB::Event::PacketEvent::ClientLoginAfterEvent>(
+        [](GMLIB::Event::PacketEvent::ClientLoginAfterEvent& event) {
             auto clientXuid = event.getClientAuthXuid();
             if (clientXuid.empty()) {
                 std::string msg = tr("disconnect.clientNotAuth");
@@ -274,7 +297,7 @@ void listenEvent() {
             auto uuid     = event.getUuid().asString();
             auto xuid     = event.getServerAuthXuid();
             auto realName = event.getRealName();
-            if (isBanned(uuid) || isBanned(realName)) {
+            if (isBanned(uuid, realName)) {
                 auto info    = getBannedInfo(uuid);
                 auto endtime = info.second == "forever" ? tr("disconnect.forever") : info.second;
                 if (isExpired(info.second)) {
