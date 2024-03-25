@@ -2,6 +2,9 @@
     "name": "${pluginName}",
     "entry": "${pluginFile}",
     "type": "native",
+    "author": "GroupMountain",
+    "description": "A powerful blacklist plugin",
+    "version": "0.9.1",
     "dependencies": [
         {
             "name": "GMLIB"
