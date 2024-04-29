@@ -5,32 +5,13 @@ nlohmann::json mBanIpList;
 
 std::mutex mtx;
 
-void saveBanFile() {
-    std::string path = "./banned-players.json";
-    GMLIB::Files::JsonFile::writeFile(path, mBanList);
-}
+void saveBanFile() { GMLIB::Files::JsonFile::writeFile("./banned-players.json", mBanList); }
 
-void saveBanIpFile() {
-    std::string path = "./banned-ips.json";
-    GMLIB::Files::JsonFile::writeFile(path, mBanIpList);
-}
+void saveBanIpFile() { GMLIB::Files::JsonFile::writeFile("./banned-ips.json", mBanIpList); }
 
 void initDataFile() {
-    auto emptyFile = nlohmann::json::array();
-    try {
-        mBanList = GMLIB::Files::JsonFile::initJson("./banned-players.json", emptyFile);
-    } catch (...) {
-        mBanList = emptyFile;
-        logger.error(tr("error.fileIsBroken", {"'banned-players.json'"}));
-        saveBanFile();
-    }
-    try {
-        mBanIpList = GMLIB::Files::JsonFile::initJson("./banned-ips.json", emptyFile);
-    } catch (...) {
-        mBanIpList = emptyFile;
-        logger.error(tr("error.fileIsBroken", {"'banned-ips.json'"}));
-        saveBanIpFile();
-    }
+    mBanList   = GMLIB::Files::JsonFile::initJson("./banned-players.json", nlohmann::json::array());
+    mBanIpList = GMLIB::Files::JsonFile::initJson("./banned-ips.json", nlohmann::json::array());
 }
 
 std::string getIP(std::string ipAndPort) {
