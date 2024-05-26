@@ -1,7 +1,10 @@
 #pragma once
-#include "Global.h"
+#include <iostream>
 
-std::string defaultConfig = R"({
-    "language": "en_US",
-    "CommandPermissionLevel": 4
-})";
+struct Config {
+    int version = 1;
+
+    std::string language = "en_US";
+
+    int CommandPermissionLevel = 4;
+};

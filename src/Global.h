@@ -5,18 +5,14 @@
 #define PLUGIN_NAME "GMBlacklist"
 
 extern ll::Logger logger;
-extern int        commandPermissionLevel;
-
-extern GMLIB::Files::JsonConfig* Config;
 
 extern nlohmann::json mBanList;
 extern nlohmann::json mBanIpList;
 extern nlohmann::json mUserCache;
 
-extern std::string tr(std::string key, std::vector<std::string> data = {});
+extern std::string tr(std::string const& key, std::vector<std::string> const& data = {});
 extern std::string getExpiredTime(int offsetMinutes = 0);
 
-extern void initConfigFile();
 extern void initDataFile();
 
 extern void RegisterCommands();

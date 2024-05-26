@@ -1,7 +1,7 @@
 #pragma once
-#include "Global.h"
+#include <iostream>
 
-std::string defaultLanguage_en_US = R"({
+std::string en_US = R"({
     "disconnect.isBanned": "You are banned!\n\nReason: %1$s \nEnd Time: %2$s",
     "disconnect.ipIsBanned": "Your IP is banned:\n\nReason: %1$s \nEnd Time: %2$s",
     "disconnect.defaultReason": "You are banned by Admin",
@@ -32,7 +32,7 @@ std::string defaultLanguage_en_US = R"({
 })";
 
 
-std::string defaultLanguage_zh_CN = R"({
+std::string zh_CN = R"({
     "disconnect.isBanned": "你已被服务器封禁！\n\n原因： %1$s \n解封时间： %2$s",
     "disconnect.ipIsBanned": "你的IP地址已被服务器封禁！\n\n原因： %1$s \n解封时间： %2$s",
     "disconnect.defaultReason": "你已被管理员封禁",

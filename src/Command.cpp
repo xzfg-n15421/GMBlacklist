@@ -1,3 +1,4 @@
+#include "Entry.h"
 #include "Global.h"
 
 struct BanParam {
@@ -46,8 +47,11 @@ void banExecute(CommandOrigin const& origin, CommandOutput& output, BanParam con
 }
 
 void RegBanCmd() {
-    auto& cmd = ll::command::CommandRegistrar::getInstance()
-                    .getOrCreateCommand("ban", tr("command.ban.desc"), (CommandPermissionLevel)commandPermissionLevel);
+    auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
+        "ban",
+        tr("command.ban.desc"),
+        (CommandPermissionLevel)GMBlacklist::Entry::getInstance()->getConfig().CommandPermissionLevel
+    );
     cmd.overload<BanParam>()
         .required("name")
         .optional("time")
@@ -71,7 +75,7 @@ void RegUnbanCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
         "unban",
         tr("command.unban.desc"),
-        (CommandPermissionLevel)commandPermissionLevel
+        (CommandPermissionLevel)GMBlacklist::Entry::getInstance()->getConfig().CommandPermissionLevel
     );
     cmd.overload<UnbanParam>()
         .required("name")
@@ -132,7 +136,7 @@ void RegBanIpCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
         "banip",
         tr("command.banip.desc"),
-        (CommandPermissionLevel)commandPermissionLevel
+        (CommandPermissionLevel)GMBlacklist::Entry::getInstance()->getConfig().CommandPermissionLevel
     );
     ll::service::getCommandRegistry()->registerAlias("banip", "ban-ip");
     cmd.overload<BanIpParam>()
@@ -158,7 +162,7 @@ void RegUnbanipCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
         "unbanip",
         tr("command.unbanip.desc"),
-        (CommandPermissionLevel)commandPermissionLevel
+        (CommandPermissionLevel)GMBlacklist::Entry::getInstance()->getConfig().CommandPermissionLevel
     );
     cmd.overload<UnbanIpParam>()
         .required("ip")
@@ -185,7 +189,7 @@ void RegBanlistCmd() {
     auto& cmd = ll::command::CommandRegistrar::getInstance().getOrCreateCommand(
         "banlist",
         tr("command.banlist.desc"),
-        (CommandPermissionLevel)commandPermissionLevel
+        (CommandPermissionLevel)GMBlacklist::Entry::getInstance()->getConfig().CommandPermissionLevel
     );
     cmd.overload<BanListParam>()
         .optional("mode")

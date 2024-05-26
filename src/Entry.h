@@ -1,8 +1,10 @@
 #pragma once
-
-#include <ll/api/plugin/NativePlugin.h>
+#include "Global.h"
+#include "Config.h"
 
 namespace GMBlacklist {
+
+using namespace GMLIB::Files::I18n;
 
 class Entry {
 
@@ -26,8 +28,14 @@ public:
     // /// @return True if the plugin is unloaded successfully.
     // bool unload();
 
+    Config& getConfig();
+
+    JsonI18n& getI18n();
+
 private:
     ll::plugin::NativePlugin& mSelf;
+    std::optional<Config>     mConfig;
+    std::optional<JsonI18n>   mI18n;
 };
 
 } // namespace GMBlacklist
