@@ -13,7 +13,7 @@ std::string en_US = R"({
     "command.unban.desc": "unban a player",
     "command.unban.success": "Player %1$s is successfully unbanned!",
     "command.unban.notBanned": "Player %1$s is not banned!",
-    "command.banip.desc": "unban an IP",
+    "command.banip.desc": "ban an IP",
     "command.banip.success": "IP %1$s is successfully banned, unban date: %2$s",
     "command.banip.isBanned": "IP %1$s is already banned",
     "command.unbanip.desc": "unban an IP",
