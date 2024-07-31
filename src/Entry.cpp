@@ -31,7 +31,7 @@ bool Entry::enable() {
     mI18n->updateOrCreateLanguage("en_US", en_US);
     mI18n->updateOrCreateLanguage("zh_CN", zh_CN);
     mI18n->loadAllLanguages();
-    mI18n->chooseLanguage(mConfig->language);//maybe
+    mI18n->chooseLanguage(mConfig->language); // maybe
     checkBanTimeTask();
     RegisterCommands();
     listenEvent();
@@ -49,7 +49,7 @@ JsonI18n& Entry::getI18n() { return mI18n.value(); }
 
 } // namespace GMBlacklist
 
-LL_REGISTER_PLUGIN(GMBlacklist::Entry, GMBlacklist::Entry::getInstance());
+LL_REGISTER_MOD(GMBlacklist::Entry, GMBlacklist::Entry::getInstance());
 
 std::string tr(std::string const& key, std::vector<std::string> const& data) {
     return GMBlacklist::Entry::getInstance()->getI18n().get(key, data);
