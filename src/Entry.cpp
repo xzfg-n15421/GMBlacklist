@@ -2,7 +2,7 @@
 #include "Global.h"
 #include "Language.h"
 
-ll::Logger logger(PLUGIN_NAME);
+ll::Logger logger(MOD_NAME);
 
 namespace GMBlacklist {
 

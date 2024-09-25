@@ -2,7 +2,7 @@
 #include <include_all.h>
 #include <sstream>
 
-#define PLUGIN_NAME "GMBlacklist"
+#define MOD_NAME "GMBlacklist"
 
 extern ll::Logger logger;
 
